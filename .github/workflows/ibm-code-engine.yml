@@ -1,0 +1,39 @@
+name: IBM Code Engine (bigkain-ibm-backend)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: GitHub environment
+        type: choice
+        options: [Development, Production]
+        default: Development
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'Development' }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require IBM secrets
+        run: |
+          test -n "${{ secrets.IBM_IAM_API_KEY }}" || { echo "Set secret IBM_IAM_API_KEY"; exit 1; }
+
+      - name: Deploy app to IBM Code Engine
+        uses: IBM/code-engine-github-action@v1
+        with:
+          api-key: ${{ secrets.IBM_IAM_API_KEY }}
+          resource-group: ${{ vars.IBM_RESOURCE_GROUP || 'Default' }}
+          region: ${{ vars.IBM_REGION || 'us-south' }}
+          project: ${{ vars.IBM_CE_PROJECT || 'bigkain' }}
+          component: app
+          name: ${{ vars.IBM_CE_APP || 'bigkain-ibm-backend' }}
+          build-source: ${{ vars.IBM_CE_BUILD_SOURCE || '.' }}

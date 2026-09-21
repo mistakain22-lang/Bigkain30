@@ -1,18 +1,33 @@
-# Access model
+# Access model (finalized: IBM first)
+
+## Deploy target
+Primary: IBM Cloud Code Engine application `bigkain-ibm-backend`.
+Workflow: `.github/workflows/ibm-code-engine.yml`
+Fallback: Azure App Service via `.github/workflows/azure-webapps-node.yml` (OIDC or publish profile).
 
 ## GitHub
 - Default Actions token: contents read.
-- Deploy job: contents none, id-token write (OIDC).
-- CODEOWNERS: @floreskain4-web on .github; both owners on general files.
-- ChatGPT/Grok write requires GitHub App install on floreskain4-web with Contents: Read and write.
+- IBM job: contents read only (uses IBM IAM API key secret, not git write).
+- CODEOWNERS: @floreskain4-web on .github.
+- ChatGPT/Grok write still needs GitHub App install on floreskain4-web with Contents: Read and write.
 
-## Azure
-- OIDC federated subjects:
-  - repo:floreskain4-web/Bigkain30:environment:Development
-  - repo:floreskain4-web/Bigkain30:environment:Production
-- Assign role `App Service GitHub Deployer` (see .github/azure/app-service-github-deployer.json) or Website Contributor on the Web App resource only.
-- Data plane (Key Vault secrets, blobs) is not granted to the GitHub identity. Give those DataActions to the App Service managed identity if the app needs them at runtime.
+## IBM Cloud
+Secret (repo or environment):
+- IBM_IAM_API_KEY — IAM API key of a service ID limited to the Code Engine project.
 
-## Variables and secrets
-Variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID, AZURE_WEBAPP_NAME
-Environment secret (fallback): AZURE_WEBAPP_PUBLISH_PROFILE
+Variables:
+- IBM_RESOURCE_GROUP (default Default)
+- IBM_REGION (default us-south)
+- IBM_CE_PROJECT (default bigkain)
+- IBM_CE_APP (default bigkain-ibm-backend)
+- IBM_CE_BUILD_SOURCE (default .)
+
+Create the API key in IBM Cloud IAM. Scope it to the Code Engine project, not account Administrator.
+IBM does not use GitHub OIDC the same way Azure does; the API key is the current official Actions path.
+
+## Azure (fallback only)
+OIDC subjects:
+- repo:OWNER/REPO:environment:Development
+- repo:OWNER/REPO:environment:Production
+Role: Website Contributor or `.github/azure/app-service-github-deployer.json` on the Web App only.
+Data plane (Key Vault, blobs) stays on the App Service managed identity, not the GitHub identity.
