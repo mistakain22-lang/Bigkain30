@@ -1,0 +1,29 @@
+{
+  "Name": "App Service GitHub Deployer",
+  "IsCustom": true,
+  "Description": "Deploy bits to an existing Web App; no delete, no IAM, no plan resize",
+  "AssignableScopes": [
+    "/subscriptions/SUBSCRIPTION_ID"
+  ],
+  "Actions": [
+    "Microsoft.Web/sites/read",
+    "Microsoft.Web/sites/config/read",
+    "Microsoft.Web/sites/config/list/action",
+    "Microsoft.Web/sites/config/write",
+    "Microsoft.Web/sites/publishxml/action",
+    "Microsoft.Web/sites/publish/Read",
+    "Microsoft.Web/sites/slots/read",
+    "Microsoft.Web/sites/slots/config/read",
+    "Microsoft.Web/sites/slots/config/list/action",
+    "Microsoft.Authorization/*/read",
+    "Microsoft.Resources/subscriptions/resourceGroups/read",
+    "Microsoft.Insights/components/read"
+  ],
+  "NotActions": [
+    "Microsoft.Web/sites/delete",
+    "Microsoft.Web/sites/slots/delete",
+    "Microsoft.Web/serverfarms/*"
+  ],
+  "DataActions": [],
+  "NotDataActions": []
+}

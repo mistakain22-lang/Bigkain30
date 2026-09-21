@@ -1,0 +1,30 @@
+name: CODEOWNERS syntax
+
+on:
+  pull_request:
+    paths:
+      - ".github/CODEOWNERS"
+      - "CODEOWNERS"
+  push:
+    branches: [main]
+    paths:
+      - ".github/CODEOWNERS"
+      - "CODEOWNERS"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require CODEOWNERS and @owners
+        run: |
+          file=".github/CODEOWNERS"
+          [ -f "$file" ] || file="CODEOWNERS"
+          test -f "$file"
+          if grep -vE '^\s*#|^\s*$' "$file" | grep -v '@'; then
+            echo "Every rule needs at least one @owner"
+            exit 1
+          fi

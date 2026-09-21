@@ -1,0 +1,5 @@
+# Last matching pattern wins.
+*                         @floreskain4-web @mistakain22-lang
+/.github/                 @floreskain4-web
+/.github/workflows/       @floreskain4-web
+*.md                      @floreskain4-web @mistakain22-lang
