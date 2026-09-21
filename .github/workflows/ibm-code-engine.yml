@@ -15,18 +15,25 @@ permissions:
   contents: read
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm test --if-present
+
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment || 'Development' }}
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
-
-      - name: Require IBM secrets
-        run: |
-          test -n "${{ secrets.IBM_IAM_API_KEY }}" || { echo "Set secret IBM_IAM_API_KEY"; exit 1; }
-
       - name: Deploy app to IBM Code Engine
         uses: IBM/code-engine-github-action@v1
         with:

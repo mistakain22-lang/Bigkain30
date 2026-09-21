@@ -1,0 +1,14 @@
+{
+  "name": "bigkain-ibm-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bigkain backend for IBM Code Engine",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
